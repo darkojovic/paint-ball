@@ -79,7 +79,8 @@
                      {:class "col-md-8 col-md-offset-2"}
                      [:div
                       {:class "heading-section text-center animate-box"}
-                      [:h2 "Tereni"]]]]
+                      [:h2 "Tereni"]
+                      [:a {:href "/courts-new" :class "btn btn-primary"} "Novi teren"]]]]
                    [:div
                     {:class "row text-center"}
                     (for [court (db/all-courts)]
@@ -96,4 +97,151 @@
                           [:span (str "Kapacitet: " (:capacity court))]
                           [:span (str "Cena: " (:price court))]
                           [:img {:src (:image court)}]
-                          [:p (:description court)]]]]])]]]))
+                          [:p (:description court)]
+                          [:a
+                           {:href  (str "/courts-edit/" (h (:id court)))
+                            :class "btn btn-primary"}
+                           "Izmeni"]
+                          [:br]
+                          [:br]
+                          [:a
+                           {:href  (str "/courts-delete/" (h (:id court)))
+                            :class "btn btn-danger"}
+                           "Obriši"]]]]])]]]))
+
+(defn courts-edit [& [id error]]
+  (let [court (if
+                (not (nil? id))
+                (db/find-court id)
+                nil)]
+    (layout/common 1
+                   [:div
+                    {:class                         "fh5co-parallax"
+                     :style                         "background-image: url(images/home-image-3.jpg); height: 240px;"
+                     :data-stellar-background-ratio "0.5"}
+                    [:div {:class "overlay"}]
+                    [:div
+                     {:class "container"}
+                     [:div
+                      {:class "row"}
+                      [:div
+                       {:class "col-md-8 col-md-offset-2 col-sm-12 col-sm-offset-0 col-xs-12 col-xs-offset-0 text-center fh5co-table"}
+                       [:div
+                        {:class "fh5co-intro fh5co-table-cell animate-box"}
+                        [:p (if (nil? id) "Novi teren" "Izmena terena")]]]]]]
+                   [:div
+                    {:class "fh5xo-contact"}
+                    [:div
+                     {:class "container"}
+                     (form-to
+                      [:post "/courts-save"
+                       :name "court-form"
+                       :id   "court-form"]
+                      [:p {:class "alert alert-danger;" :style "color:red" :id "alert alert-danger"} error]
+                      [:div
+                       {:class "row"}
+                       [:div
+                        {:class "col-md-9 animate-box"}
+                        [:div
+                         {:class "row"}
+                         [:div
+                          {:class "col-md-1"}
+                          [:label {:for "id"} "Id"]]
+                         [:div
+                          {:class "col-md-11"}
+                          (text-field
+                           {:readonly "true"
+                            :type     "text"
+                            :class    "form-control"
+                            :id       "id"
+                            :name     "id"
+                            :required "required"}
+                           "id" (:id court))]]
+                        [:br]
+
+                        [:div
+                         {:class "row"}
+                         [:div
+                          {:class "col-md-1"}
+                          [:label {:for "name"} "Naziv"]]
+                         [:div
+                          {:class "col-md-11"}
+                          (text-field
+                           {:type        "text"
+                            :class       "form-control"
+                            :id          "name"
+                            :name        "name"
+                            :placeholder "naziv"
+                            :required    "required"}
+                           "name" (:name court))]]
+                        [:br]
+
+                        [:div
+                         {:class "row"}
+                         [:div
+                          {:class "col-md-1"}
+                          [:label {:for "capacity"} "Kapacitet"]]
+                         [:div
+                          {:class "col-md-11"}
+                          (text-field
+                           {:type        "number"
+                            :class       "form-control"
+                            :id          "capacity"
+                            :name        "capacity"
+                            :placeholder "kapacitet"
+                            :required    "required"}
+                           "capacity" (:capacity court))]]
+                        [:br]
+
+                        [:div
+                         {:class "row"}
+                         [:div
+                          {:class "col-md-1"}
+                          [:label {:for "image"} "Slika"]]
+                         [:div
+                          {:class "col-md-11"}
+                          (text-field
+                           {:type        "text"
+                            :class       "form-control"
+                            :id          "image"
+                            :name        "image"
+                            :placeholder "putanja(images/... ili url)"}
+                           "image" (:image court))]]
+                        [:br]
+
+                        [:div
+                         {:class "row"}
+                         [:div
+                          {:class "col-md-1"}
+                          [:label {:for "image"} "Opis"]]
+                         [:div
+                          {:class "col-md-11"}
+                          (text-area
+                           {:class "form-control" :id "description" :name "description" :placeholder "opis" :rows "7"} "description" (:description court))]]
+                        [:br]
+
+                        [:div
+                         {:class "row"}
+                         [:div
+                          {:class "col-md-1"}
+                          [:label {:for "price"} "Cena"]]
+                         [:div
+                          {:class "col-md-11"}
+                          (text-field
+                           {:type        "number"
+                            :class       "form-control"
+                            :id          "price"
+                            :name        "price"
+                            :placeholder "cena"
+                            :required    "required"}
+                           "price" (:price court))]]
+                        [:br]
+                        [:br]
+                        [:div
+                         {:class "row"}
+                         [:a {:href "/courts-all" :class "btn btn-secondary"} "Nazad"]
+                         (submit-button
+                          {:class "btn btn-primary"} "Sačuvaj")
+                         [:br]
+                         [:br]
+                         [:br]]]])]])))

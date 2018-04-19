@@ -22,7 +22,22 @@
 
 (defroutes page-routes
   (GET "/" [] (pages/index))
-  (GET "/courts-all" [] (pages/courts-all)))
+  (GET "/courts-all" [] (pages/courts-all))
+  (GET "/courts-edit/:id" [id] (pages/courts-edit id))
+  (GET "/courts-new" [] (pages/courts-edit))
+  (POST "/courts-save"
+        [id name capacity image description price error]
+        (if (clojure.string/blank? id)
+          (do
+            (db/create-court name capacity image description price)
+            (ring/redirect "/courts-all"))
+          (do
+            (db/update-court id name capacity image description price)
+            (ring/redirect "/courts-all"))))
+  (GET "/courts-delete/:id" [id]
+       (do
+         (db/delete-court id)
+         (ring/redirect "/courts-all"))))
 
 (def app
   (-> (routes page-routes app-routes)
