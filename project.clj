@@ -10,7 +10,9 @@
                  [ring/ring-jetty-adapter "1.6.1"]
                  [ring-server "0.5.0"]
                  [hiccup "1.0.5"]
-                 [compojure "1.6.0"]]
+                 [compojure "1.6.0"]
+                 [org.clojure/java.jdbc "0.6.1"]
+                 [org.postgresql/postgresql "9.4-1201-jdbc41"]]
   :main ^:skip-aot paint-ball-court.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
