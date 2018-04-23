@@ -54,3 +54,7 @@
     (catch Exception e
       (.printStackTrace
         (.getNextException e)))))
+
+(defn reservations-by-court [court_id]
+  (sql/query db-spec
+             ["SELECT * FROM RESERVATION WHERE court_id = ?" court_id]))

@@ -43,15 +43,16 @@
                      {:class "col-md-12 schedule-container"}
                      [:div
                       {:class "schedule-content active"}
-                      [:div
-                       {:class "col-md-6 col-sm-6"}
-                       [:a
-                        {:href "/courts-all"}
-                        [:div
-                         {:class "program program-schedule"}
-                         [:img {:src   "images/court.jpg"
-                                :style "height:100px;"}]
-                         [:h3 "Tereni"]]]]]]]]]))
+                      [:div {:class "col-md-6 col-sm-6"}
+                       [:a {:href "/courts-all"}
+                        [:div {:class "program program-schedule"}
+                         [:img {:src   "images/court.jpg" :style "height:100px;"}]
+                         [:h3 "Tereni"]]]]
+                      [:div {:class "col-md-6 col-sm-6"}
+                       [:a {:href "/reservations-all"}
+                        [:div {:class "program program-schedule"}
+                         [:img {:src   "images/reservation.jpg" :style "height:100px;"}]
+                         [:h3 "Rezervacije"]]]]]]]]]))
 
 (defn courts-all []
   (layout/common 1
@@ -245,3 +246,44 @@
                          [:br]
                          [:br]
                          [:br]]]])]])))
+
+(defn reservations-all []
+  (layout/common 2
+                 [:div
+                  {:class "fh5co-parallax" :style "background-image: url(images/home-image-2.jpg); height: 240px;"
+                   :data-stellar-background-ratio "0.5"}
+                  [:div {:class "overlay"}]
+                  [:div {:class "container"}
+                   [:div {:class "row"}
+                    [:div {:class "col-md-8 col-md-offset-2 col-sm-12 col-sm-offset-0 col-xs-12 col-xs-offset-0 text-center fh5co-table"}
+                     [:div {:class "fh5co-intro fh5co-table-cell animate-box"}
+                      [:p "Administracija rezervacija"]]]]]]
+                 [:div {:id "fh5co-team-section"}
+                  [:div {:class "container"}
+                   [:div {:class "row text-center"}
+                    (for [court (db/all-courts)]
+                      [:div
+                       [:div {:class "row"}
+                        [:div {:class "col-md-8 col-md-offset-2"}
+                         [:div {:class "heading-section text-center animate-box"}
+                          [:h2 (:name court)]]]]
+                       [:div {:class "row"}
+                        [:table {:class "table"}
+                         [:thead
+                          [:tr
+                           [:th "Datum"]
+                           [:th "Vreme"]
+                           [:th "Kontakt osoba"]
+                           [:th "Telefon"]
+                           [:th "Popust"]
+                           [:th "Ukupna cena"]]]
+                         (into [:tbody]
+                               (for [reservation (db/reservations-by-court (:id court))]
+                                 [:tr
+                                  [:td (:date reservation)]
+                                  [:td (:time reservation)]
+                                  [:td (:name reservation)]
+                                  [:td (:contact_number reservation)]
+                                  [:td (:discount reservation)]
+                                  [:td (:total_price reservation)]
+                                 ]))]]])]]]))

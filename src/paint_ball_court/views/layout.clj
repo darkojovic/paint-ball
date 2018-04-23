@@ -40,7 +40,9 @@
             [:li
              (if (= activeTab 1) {:class "active"})
              [:a {:href "/courts-all"} "Tereni"]]
-            ]]]]]]
+            [:li
+             (if (= activeTab 2) {:class "active"})
+             [:a {:href "/reservations-all"} "Rezervacije"]]]]]]]]
       content
       [:footer
        {:id "footer"}
