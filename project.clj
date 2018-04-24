@@ -12,7 +12,8 @@
                  [hiccup "1.0.5"]
                  [compojure "1.6.0"]
                  [org.clojure/java.jdbc "0.6.1"]
-                 [org.postgresql/postgresql "9.4-1201-jdbc41"]]
+                 [org.postgresql/postgresql "9.4-1201-jdbc41"]
+                 [clj-time "0.14.2"]]
   :main ^:skip-aot paint-ball-court.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})

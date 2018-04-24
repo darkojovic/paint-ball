@@ -2,7 +2,8 @@
   (:use [hiccup.core :only (h)])
   (:require [paint-ball-court.views.layout :as layout]
             [paint-ball-court.models.paint-ball-db :as db]
-            [hiccup.form :refer :all]))
+            [hiccup.form :refer :all]
+            [clj-time.core :as t]))
 
 (defn index []
   (layout/common 0
@@ -110,7 +111,7 @@
                             :class "btn btn-danger"}
                            "Obriši"]]]]])]]]))
 
-(defn courts-edit [& [id error]]
+(defn courts-edit [& [id]]
   (let [court (if
                 (not (nil? id))
                 (db/find-court id)
@@ -138,7 +139,6 @@
                       [:post "/courts-save"
                        :name "court-form"
                        :id   "court-form"]
-                      [:p {:class "alert alert-danger;" :style "color:red" :id "alert alert-danger"} error]
                       [:div
                        {:class "row"}
                        [:div
@@ -276,7 +276,9 @@
                            [:th "Kontakt osoba"]
                            [:th "Telefon"]
                            [:th "Popust"]
-                           [:th "Ukupna cena"]]]
+                           [:th "Ukupna cena"]
+                           [:th ""]
+                           [:th ""]]]
                          (into [:tbody]
                                (for [reservation (db/reservations-by-court (:id court))]
                                  [:tr
@@ -286,4 +288,95 @@
                                   [:td (:contact_number reservation)]
                                   [:td (:discount reservation)]
                                   [:td (:total_price reservation)]
-                                 ]))]]])]]]))
+                                  [:td
+                                   [:a
+                                    {:class "btn btn-warning btn-sm"
+                                     :href  (str "/reservations-edit/" (h (:id court)) "/" (h (:id reservation)))} "izmena"]]
+                                  [:td
+                                   [:a {:class "btn btn-danger btn-sm" :href (str "/reservations-delete/" (h (:id reservation)))} "brisanje"]]]))]]
+                       [:div {:class "row"}
+                        [:div {:class "col-md-12 text-center"}
+                         [:a {:href (str "/reservations-new/" (h (:id court))) :class "btn btn-primary btn-sm"} "Nova rezervacija"]]
+                        [:br][:br][:br]]])]]]))
+
+(defn reservations-edit [court_id & [id]]
+  (let [reservation (if (not (nil? id)) (db/find-reservation id) nil)
+        court       (db/find-court court_id)]
+    (layout/common 2
+                   [:div {:class "fh5co-parallax" :style "background-image: url(images/home-image-3.jpg); height: 240px;" :data-stellar-background-ratio "0.5"}
+                    [:div {:class "overlay"}]
+                    [:div {:class "container"}
+                     [:div {:class "row"}
+                      [:div {:class "col-md-8 col-md-offset-2 col-sm-12 col-sm-offset-0 col-xs-12 col-xs-offset-0 text-center fh5co-table"}
+                       [:div {:class "fh5co-intro fh5co-table-cell animate-box"}
+                        [:p (:court name)]
+                        [:p (if (nil? id) "Nova rezervacija" "Izmena rezervacije")]]]]]]
+                   [:div {:class "fh5xo-contact"}
+                    [:div {:class "container"}
+                     (form-to [:post "/reservations-save" :name "reservations-form" :id   "reservations-form"]
+                              [:div {:class "row"}
+                               [:div {:class "col-md-9 animate-box"}
+                                [:div {:class "row"}
+                                 [:div {:class "col-md-2"}
+                                  [:label {:for "id"} "Id"]]
+                                 [:div {:class "col-md-10"}
+                                  (text-field {:readonly "true" :type "text" :class "form-control" :id "id" :name "id" :required "required"}
+                                              "id" (:id reservation))]]
+                                [:br]
+
+                                [:div {:class "row"}
+                                 [:div {:class "col-md-2"}
+                                  [:label {:for "court_id"} "Id terena"]]
+                                 [:div {:class "col-md-10"}
+                                  (text-field {:readonly "true" :type "text" :class "form-control" :id "court_id" :name "court_id" :placeholder "id terena" :required "required"}
+                                              "court_id" (:id court))]]
+                                [:br]
+
+                                [:div {:class "row"}
+                                 [:div {:class "col-md-2"}
+                                  [:label {:for "date"} "Datum"]]
+                                 [:div {:class "col-md-10"}
+                                  (text-field {:type "date" :class "form-control" :id "date" :name "date" :placeholder "mm/dd/yyyy" :required "required"}
+                                              "date" (:date reservation))]]
+                                [:br]
+
+                                [:div {:class "row"}
+                                 [:div {:class "col-md-2"}
+                                  [:label {:for "date"} "Vreme"]]
+                                 [:div {:class "col-md-10"}
+                                  (text-field {:type "time" :class "form-control" :id "time" :name "time" :placeholder "vreme" :required "required"}
+                                              "time" (:time reservation))]]
+                                [:br]
+
+                                [:div {:class "row"}
+                                 [:div {:class "col-md-2"}
+                                  [:label {:for "name"} "Kontakt osoba"]]
+                                 [:div {:class "col-md-10"}
+                                  (text-field {:type  "text" :class "form-control" :id "name" :name "name" :placeholder "ime" :required "required"}
+                                              "name" (:name reservation))]]
+                                [:br]
+
+                                [:div {:class "row"}
+                                 [:div {:class "col-md-2"}
+                                  [:label {:for "contact_number"} "Telefon"]]
+                                 [:div {:class "col-md-10"}
+                                  (text-field {:type "text" :class "form-control" :id "contact_number" :name "contact_number" :placeholder "telefon" :required "required"}
+                                              "contact_number" (:contact_number reservation))]]
+                                [:br]
+
+                                [:div {:class "row"}
+                                 [:div {:class "col-md-2"}
+                                  [:label {:for "discount"} "Popust"]]
+                                 [:div
+                                  {:class "col-md-10"}
+                                  (text-field {:type "text" :class "form-control" :id "discount" :name "discount" :placeholder "popust (%)"}
+                                              "discount" (:discount reservation))]]
+                                [:br]
+                                [:br]
+                                [:br]
+                                [:div {:class "row"}
+                                 [:a {:href "/reservations-all" :class "btn btn-secondary"} "Nazad"]
+                                 (submit-button {:class "btn btn-primary"} "Sačuvaj")
+                                 [:br]
+                                 [:br]
+                                 [:br]]]])]])))

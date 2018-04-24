@@ -30,7 +30,7 @@
   (GET "/courts-new" [] (pages/courts-edit))
 
   (POST "/courts-save"
-        [id name capacity image description price error]
+        [id name capacity image description price]
         (if (clojure.string/blank? id)
           (do
             (db/create-court name capacity image description price)
@@ -44,7 +44,26 @@
          (db/delete-court id)
          (ring/redirect "/courts-all")))
 
-  (GET "/reservations-all" [] (pages/reservations-all)))
+  (GET "/reservations-all" [] (pages/reservations-all))
+
+  (GET "/reservations-edit/:court_id/:id" [court_id id] (pages/reservations-edit court_id id))
+
+  (GET "/reservations-new/:court_id" [court_id] (pages/reservations-edit court_id))
+
+  (POST "/reservations-save"
+        [id court_id date time name contact_number discount] ()
+        (if (clojure.string/blank? id)
+          (do
+            (db/create-reservation court_id date time name contact_number discount)
+            (ring/redirect "/reservations-all"))
+          (do
+            (db/update-reservation id court_id date time name contact_number discount)
+            (ring/redirect "/reservations-all"))))
+
+  (GET "/reservations-delete/:id" [id]
+       (do
+         (db/delete-reservation id)
+         (ring/redirect "/reservations-all"))))
 
 (def app
   (-> (routes page-routes app-routes)
