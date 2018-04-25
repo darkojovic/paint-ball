@@ -13,7 +13,8 @@
     (include-css "/css/bootstrap.css")
     (include-css "/css/superfish.css")
     (include-css "/css/style.css")
-    (include-js "/js/modernizr-2.6.2.min.js")]
+    (include-js "/js/modernizr-2.6.2.min.js")
+    (include-js "/js/youTubePlayer.js")]
    [:body
     [:div
      {:id "fh5co-wrapper"}
@@ -64,4 +65,3 @@
    (include-js "/js/superfish.js")
    (include-js "/js/main.js")
    (include-js "/js/validator.js")))
-

@@ -2,6 +2,7 @@
   (:use [hiccup.core :only (h)])
   (:require [paint-ball-court.views.layout :as layout]
             [paint-ball-court.models.paint-ball-db :as db]
+            [paint-ball-court.client.http-client :as http-client]
             [hiccup.form :refer :all]
             [clj-time.core :as t]))
 
@@ -10,40 +11,24 @@
                  [:div
                   {:class "fh5co-hero"}
                   [:div {:class "fh5co-overlay"}]
-                  [:div
-                   {:class                         "fh5co-cover"
-                    :data-stellar-background-ratio "0.5"
-                    :style                         "background-image: url(images/home-image.jpg);"}
-                   [:div
-                    {:class "desc animate-box"}
-                    [:div
-                     {:class "container"}
-                     [:div
-                      {:class "row"}
-                      [:div
-                       {:class "col-md-7"}
+                  [:div {:class "fh5co-cover" :data-stellar-background-ratio "0.5" :style "background-image: url(images/home-image.jpg);"}
+                   [:div {:class "desc animate-box"}
+                    [:div {:class "container"}
+                     [:div {:class "row"}
+                      [:div {:class "col-md-7"}
                        [:h2 "Dobrodošli!"]
                        [:p "<span>PaintBall klub Darko Vam želi prijatan dan na poslu.</span>"]]]]]]]
 
-                 [:div
-                  {:class "fh5co-lightgray-section"
-                   :id    "fh5co-schedule-section"}
-                  [:div
-                   {:class "container"}
-                   [:div
-                    {:class "row"}
-                    [:div
-                     {:class "col-md-8 col-md-offset-2"}
-                     [:div
-                      {:class "heading-section text-center animate-box"}
+                 [:div {:class "fh5co-lightgray-section" :id "fh5co-schedule-section"}
+                  [:div {:class "container"}
+                   [:div {:class "row"}
+                    [:div {:class "col-md-8 col-md-offset-2"}
+                     [:div {:class "heading-section text-center animate-box"}
                       [:h2 "Administracija"]
                       [:p "Administracija terena i rezervacija"]]]]
-                   [:div
-                    {:class "row text-center"}
-                    [:div
-                     {:class "col-md-12 schedule-container"}
-                     [:div
-                      {:class "schedule-content active"}
+                   [:div {:class "row text-center"}
+                    [:div {:class "col-md-12 schedule-container"}
+                     [:div {:class "schedule-content active"}
                       [:div {:class "col-md-6 col-sm-6"}
                        [:a {:href "/courts-all"}
                         [:div {:class "program program-schedule"}
@@ -53,7 +38,52 @@
                        [:a {:href "/reservations-all"}
                         [:div {:class "program program-schedule"}
                          [:img {:src   "images/reservation.jpg" :style "height:100px;"}]
-                         [:h3 "Rezervacije"]]]]]]]]]))
+                         [:h3 "Rezervacije"]]]]]]]]]
+                 [:div {:id "fh5co-blog-section"}
+                  [:div {:class "container"}
+                   [:div {:class "row"}
+                    [:div {:class "col-md-6"}
+                     [:div {:class "col-md-12"}
+                      [:div {:class "heading-section animate-box"}
+                       [:h2 "Vreme u Beogradu"]]]
+                     [:div {:class "col-md-12 col-md-offset-0"}
+                      [:div {:class "fh5co-blog animate-box"}
+                       [:div {:class "fh5co-blog animate-box"}
+                        [:div {:class "meta-date text-center"}
+                         [:p
+                          [:span {:class "date"} (t/day (t/now))]
+                          [:span (t/month (t/now))]
+                          [:span (t/year (t/now))]]]
+                        [:div {:class "desc desc2"}
+                         [:h3
+                          [:img
+                           {:src (str "http://openweathermap.org/img/w/"
+                                      (get-in
+                                       (first (get-in (http-client/get-current-weather) ["weather"]))
+                                       ["icon"])
+                                      ".png")}]
+
+                          (get-in (first (get-in (http-client/get-current-weather) ["weather"]))
+                                  ["description"])]
+                         [:span {:class "comment"}
+                          (str "Temperatura: " (get-in (http-client/get-current-weather) ["main" "temp"]))]
+                         [:span {:class "posted_by"}
+                          (str "Minimalna: " (get-in (http-client/get-current-weather) ["main" "temp_min"]))]
+                         [:span {:class "posted_by"}
+                          (str "Maksimalna: " (get-in (http-client/get-current-weather) ["main" "temp_max"]))]
+                         [:span {:class "comment"}
+                          (str "Brzina vetra: " (get-in (http-client/get-current-weather) ["wind" "speed"]))]]]]]]]]]
+                 [:div {:id "fh5co-blog-section"}
+                  [:div {:class "container"}
+                   [:div {:class "row"}
+                    [:div {:class "col-md-6"}
+                     [:div {:class "col-md-12"}
+                      [:div {:class "heading-section animate-box"}
+                       [:h2 "Pesma dana"]]]
+                     [:div {:class "col-md-6 col-md-offset-3"}
+                      [:div {:class "fh5co-blog animate-box"}
+                       [:div {:class "fh5co-blog animate-box"}
+                        [:div {:id "player"}]]]]]]]]))
 
 (defn courts-all []
   (layout/common 1
