@@ -1,27 +1,41 @@
+#PAINT-BALL COURT APP
+
 This is an application designed for administration of a paintball court,  as a part of the assignment for the course Software Engineering Tools and Methodology on Master's studies - Software Engineering and Computer Sciences at the Faculty of Organization Sciences, University of Belgrade, Serbia.
 
-#####Prerequisites:
+Prerequisites:
 * Leiningen 
 * PSQL
 
-#####Running:
+Running:
 Create empty psql db named "paintball"
 use "lein run" in command line
 
 Used libraries:
 
 [org.clojure/clojure "1.8.0"]
+
 [ring/ring-core "1.6.1"]
+
 [ring/ring-defaults "0.3.0"]
+
 [ring/ring-jetty-adapter "1.6.1"]
+
 [ring-server "0.5.0"]
+
 [hiccup "1.0.5"]
+
 [compojure "1.6.0"]
+
 [org.clojure/java.jdbc "0.6.1"]
+
 [org.postgresql/postgresql "9.4-1201-jdbc41"]
+
 [clj-time "0.14.2"]
+
 [clj-http "3.8.0"]
+
 [cheshire "5.8.0"]
+
 [buddy/buddy-auth "2.0.0"]
 
 Functionalities:
