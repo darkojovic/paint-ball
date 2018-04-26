@@ -6,9 +6,12 @@
             [ring.middleware.file-info :refer [wrap-file-info]]
             [ring.util.response :as ring]
             [hiccup.middleware :refer [wrap-base-url]]
+            [buddy.auth :refer [authenticated? throw-unauthorized]]
+            [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]
             [paint-ball-court.views.pages :as pages]
             [paint-ball-court.models.migration :as schema]
-            [paint-ball-court.models.paint-ball-db :as db]))
+            [paint-ball-court.models.paint-ball-db :as db]
+            [paint-ball-court.auth.auth :as auth]))
 
 (defn init []
   (schema/migrate))
@@ -21,7 +24,9 @@
   (route/not-found "404 Page Not Found"))
 
 (defroutes page-routes
-  (GET "/" [] (pages/index))
+  (GET "/" request
+       (if-not (authenticated? request)(throw-unauthorized)(pages/index)))
+  ;  (GET "/" request(pages/index))
 
   (GET "/courts-all" [] (pages/courts-all))
 
@@ -68,4 +73,6 @@
 (def app
   (-> (routes page-routes app-routes)
       (handler/site)
-      (wrap-base-url)))
+      (wrap-base-url)
+      (wrap-authorization auth/auth-backend)
+      (wrap-authentication auth/auth-backend)))

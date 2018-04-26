@@ -117,3 +117,8 @@
     (catch Exception e
       (.printStackTrace
         (.getNextException e)))))
+
+(defn find-user [username]
+  (sql/query db-spec
+             ["SELECT * FROM app_user WHERE username = ?" username]
+             {:result-set-fn first}))
